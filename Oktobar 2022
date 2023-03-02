@@ -1,0 +1,81 @@
+.386
+.model flat,c
+.data
+
+	n dd 3
+	rez dd ?
+	mat dd 9,1,20
+		dd 4,5,6
+		dd 7,8,9
+	
+.stack 4096
+.code
+
+
+	fja proc
+		
+		push ebp
+		mov ebp,esp
+		;pushad
+		pushfd
+		push edi
+		push ecx
+
+		mov ecx,[ebp+12]
+		mov eax,[ebp+8];&mat[ebx]
+		mov edi,[eax]
+		mov esi,0
+
+		vrti:
+			add esi,edi;suma+=a[i]
+			add eax,4; &mat[ebx]+=4
+			mov edi,[eax]
+		loop vrti
+
+		pop ecx
+		pop edi
+		popfd
+		;popad
+		pop ebp
+		
+		ret 12
+
+	fja endp
+
+	main proc
+
+	mov ebx,0
+	mov edx,n
+	shl edx,2;4n inkrement za ebx
+	mov ecx,1;broji od 1
+	
+	petlja:
+
+	cmp ecx,n
+	ja next
+		push n
+		lea eax,mat[ebx]
+		push eax
+		call fja
+
+		cmp ecx,1; kada fja prosledjuje sumu prvog elementa, nema sa cim da se uporedjuje
+		je skok
+		cmp esi,edi;	uporedjuje se prosledjena suma(esi) i prethodna suma(edi) da se ustanovi koja je veca, esi<edi
+		jae dalje
+
+		skok:
+		mov edi,esi; u esi je suma
+		mov rez ,ecx
+
+		dalje:
+		add ebx,edx ; ebx+4n,prelaz u novu vrstu
+		inc ecx
+
+	jmp petlja	
+
+	next:
+	;mov rez,ecx
+	nop
+	
+	main endp
+	end main
