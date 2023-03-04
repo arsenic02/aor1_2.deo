@@ -1,0 +1,60 @@
+.386
+.model  flat,c
+.stack 4096
+.data
+
+	mat dw 100h,101h,102h,103h
+		dw 104h,105h,106h,107h
+		dw 108h,109h,100ah,10bh
+    n dw 3
+	m dw 4
+	rez dw ?
+.code
+main proc
+	
+	mov ebx,0
+	mov bx,n
+	sub bx,2
+	shl bx,1;2(n-2)
+	mov ax,m
+	mul bx
+	add ax,2;jer je drugi element
+	mov ebx,0
+	mov bx,ax
+	mov eax,0
+	mov ax,mat[ebx];tacno
+	
+	mov esi, 0
+	mov edi,0
+	mov di, n
+	shl di, 1
+	mov edx,0
+	mov dx, m
+	shl dx, 1
+
+	
+	
+	;mov rez,eax
+spp:
+	cmp esi, edi;0 i n
+	jae kraj
+	mov ecx,0
+	mov cx, m
+	mov ebx, 0
+un:
+	cmp ebx, edx;0 i m
+	ja ink
+	cmp mat[ebx][esi], ax;poredjenje sa 2. el. pretp. vrste
+	ja ink
+		inc rez
+	
+ink:
+	add ebx, edi;ebx+n*2
+	loop un
+	add esi, 2;brojac+2
+	jmp spp
+kraj:
+nop
+ret
+main endp
+end main
