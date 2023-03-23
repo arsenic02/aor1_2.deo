@@ -1,0 +1,68 @@
+.386
+.model flat,c
+.data
+
+niz dd 3 dup(?)
+n dd 3
+mat dd 1,2,3
+	dd 4,5,6
+	dd 7,8,9
+.stack 4096
+.code
+
+max proc
+
+	
+	push ebp
+	mov ebp,esp
+	pushfd
+	pushad
+	
+	mov edi,[ebp+12];&mat
+	mov edx,[edi];za max
+	add edi,4
+	mov eax,[edi];u  eax je mat,,max=a[i]
+	
+	
+	mov ecx,[ebp+16];n
+	dec ecx;krece od 1
+	vrti:
+	
+	cmp  eax,edx; a[i]>max
+	jna dalje
+		mov edx,eax
+	dalje:
+		add edi,4
+		mov eax,[edi]
+
+	loop vrti
+	mov edi,[ebp+8];zasto ne vrati parametar u niz gde treba???
+	popad
+	popfd
+	pop ebp
+	ret 12;
+	
+max endp 
+
+main proc
+
+	mov edi, 0;za kretanje po kolonama
+		mov ecx, n
+		mov eax, ecx
+		shl eax, 2
+		mov edx, eax
+		mov ebx, 0;za kretanje po vrstama
+
+	petlja:
+		push n
+		lea eax,mat[ebx]
+		push eax
+		lea eax,niz[edi]
+		push eax
+		call max
+		add ebx,edx;inkrement za ebx
+		add edi,4;inkrement za edi
+	loop petlja
+		
+main endp
+end main
