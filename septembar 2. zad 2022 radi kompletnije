@@ -1,0 +1,83 @@
+.386
+.model flat,c
+.data
+
+	mat dd 6,2,3
+		dd 8,5,6
+		dd 7,8,9
+	rez dd 0 ;lakse da je na nula
+	n dd 3
+
+.stack 4096
+.code
+fja proc
+
+	push ebp
+	mov ebp,esp
+	pushfd
+	pushad
+	push ecx
+	
+	mov ecx,[ebp+12];	n
+	mov eax,[ebp+8];	&mat[ebx]
+	dec ecx;	n-1 jer ima n-1 elemenata
+	mov esi,0
+	add esi,type mat;	da krene od 2. elementa
+
+	push eax
+	push edi
+	push edx
+	mov edx,[eax];	privremeni registar
+	mov edi,edx;	prvi element niza je u edi
+	mov eax,0
+	
+	sumiranje:
+		add eax,mat[ebx][esi]
+		add esi,type mat; esi+4
+	loop sumiranje
+				
+	dalje:
+	pop edx
+	cmp edi,eax
+	ja skok
+	cmp rez,0
+	jne skok
+		mov rez,edx
+	
+	skok:
+	pop edi
+	pop eax
+	pop ecx
+	popad
+	popfd
+	pop ebp
+	ret 8
+
+fja endp
+
+main proc
+	mov ebx,0
+	mov ecx,n;da broji od 0 do n-1
+	mov esi,0
+	mov edi,n
+	shl edi,2;4n inkrement za ebx
+	mov edx,0
+	petlja:
+		
+		lea eax,mat[ebx]
+		push n
+		push eax; 		
+		
+		call fja
+		;add ebx,esi moze trik povecava se esi za 12 u fji i da se onda iskoristi za inkrement ebx-a
+		add ebx,edi
+		push ecx
+		mov ecx,n
+		pop ecx
+		inc edx; brojac vrsta
+	loop petlja
+
+kraj:
+nop
+main endp
+end main
