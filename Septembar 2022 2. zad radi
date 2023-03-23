@@ -1,0 +1,71 @@
+.386
+.model flat,c
+.data
+
+	n dd 3
+	mat dd 8, 2, 3
+		dd 14, 5, 6
+		dd 7, 8, 9
+	
+	suma dd 0
+	rez dd ?
+
+.stack 4096
+.code
+fja proc
+
+	push ebp
+	mov ebp,esp
+	;pushad;kvari flegove
+	pushfd
+	add ebx,4;ebx za ostale elemente, da se posalje niz vrste pocev od drugog elementa
+	mov esi,[ebx] ;koristi se da se dodaje element sumi
+	mov ecx,[ebp+8]												;izgled steka:
+	dec ecx;ima n-1 elementa									;flegovi
+	mov edi,0;za svaki poziv fje suma=0							;ebp
+	vrti:														;eip
+		add edi,esi												;n
+		add ebx,4												;ebx
+		mov esi,[ebx]
+	loop vrti
+	popfd
+	;popad
+	pop ebp
+
+	ret 8; zadrzava se namerno ebx da se koristi nakon izvrsenja fje
+
+fja endp
+
+main proc
+
+	mov ebx,0
+	push ebx
+	mov esi,0
+	mov ecx,n
+	mov edx,0; za indeksiranje
+	mov eax,0; za prvi element vrste
+
+	gore:
+
+		push n
+		lea ebx,mat[edx]; mora sa indeksima!!!!
+		mov eax,mat[edx]; prvi element
+		call fja; mozda niej dobro jer nije poslat zvanicno argument adrese
+	
+		pop ebx;	vraca se ebx sa pocetka main-a koje je na nuli
+		inc ebx;	nakon svake izvrsene fje broji vrste od nule redom
+		cmp eax,	edi;poredi 1. element sa zbirom ostalih elemenata
+
+		ja skok
+			mov rez,ebx; iz main-a ali ono broji unazad
+			ret
+
+		skok:	
+			mov edi,n
+			shl edi,2;4n inkrement za ebx
+			add edx,edi
+	loop gore
+	pop edx
+
+main endp
+end main
