@@ -31,9 +31,6 @@ main proc
 	mov edx,0
 	mov dx, m
 	shl dx, 1
-
-	
-	
 	;mov rez,eax
 spp:
 	cmp esi, edi;0 i n
@@ -47,7 +44,6 @@ un:
 	cmp mat[ebx][esi], ax;poredjenje sa 2. el. pretp. vrste
 	ja ink
 		inc rez
-	
 ink:
 	add ebx, edi;ebx+n*2
 	loop un
@@ -60,18 +56,15 @@ main endp
 end main
 __________________________________________________________________________________________________
 ;laksi nacin
-
 .386
 .model flat,c
 .data
-
 	mat dw 1,4,7,10
 		dw 2,5,8,11
 		dw 3,6,9,12
 	n dw 4
 	m dw 3
 	rez dw 0
-
 .stack 4096
 .code
 main proc		
