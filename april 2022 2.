@@ -1,0 +1,61 @@
+;kopiraj.asm
+.586
+.model flat,c
+.data
+.stack 4096
+.code
+public kopiraj
+kopiraj proc
+	push ebp
+	mov ebp,esp
+	pushfd
+	push ebx
+	push ecx
+	push edx
+	push esi
+	push edi
+	mov ecx,[ebp+16]; n*m
+	mov ebx,[ebp+12]; niz
+	mov edx,[ebp+8]; mat
+	mov esi,0
+	mov eax,0
+	petlja:
+	mov di,[edx+esi]
+	cmp di,0
+	jg skok
+		mov [ebx],di;smestanje u niz
+		inc eax; povecanje brojaca neg. brojeva
+		add ebx,2
+	skok:
+	add esi,2
+	loop petlja
+	pop edi
+	pop esi
+	pop edx
+	pop ecx
+	pop ebx
+	popfd
+	pop ebp
+	ret
+kopiraj endp
+end
+
+;main.c     ------------------------------------------------------
+#include <stdio.h>
+#include <stdlib.h>
+
+extern int kopiraj(short*, short*, int);
+void main()
+{
+	int n, m, i, j, dim;
+	short* mat, * niz;
+	scanf("%d %d", &n, &m);
+	mat = (short*)malloc(n * m * sizeof(short));
+	niz = (short*)malloc(n * m * sizeof(short));
+
+	for (i = 0; i < n * m; i++)
+		scanf("%hi", &mat[i]);
+	dim = kopiraj(mat, niz, n * m);
+	for (i = 0; i < dim; i++)
+		printf("%hi ", niz[i]);
+}
